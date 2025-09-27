@@ -16,8 +16,8 @@ export const useFlappyGame = () => {
   const frameCount = useRef(0);
   const backgroundRect = useRef<DOMRect>();
 
-  // Faster, more responsive constants
-  const moveSpeed = 0.68;     // Pipe movement speed
+// Faster, more responsive constants
+  const moveSpeed = 0.65;     // Pipe movement speed
   const gravity = 0.6;       // Increased gravity for faster falling
   const pipeGap = 35;        // Gap between pipes
   const jumpForce = -7.8;      // Stronger jump for better response
@@ -56,26 +56,12 @@ export const useFlappyGame = () => {
       birdRef.current.style.display = 'none';
     }
 
-    console.log('=== GAME ENDED ===');
-    console.log('Final score:', score);
-    console.log('Wallet in sessionStorage:', sessionStorage.getItem("flappy_wallet"));
-    console.log('Username in sessionStorage:', sessionStorage.getItem("flappy_discord"));
-
-    // Save score to Firebase - make sure we have the current score
+    // Save score
     if (score > 0) {
-      console.log('Score is > 0, calling saveScore...');
-      saveScore(score).then(() => {
-        console.log('saveScore promise resolved');
-      }).catch((error) => {
-        console.error('saveScore promise rejected:', error);
-      });
-    } else {
-      console.log('Score is 0 or less, not saving');
+      saveScore(score);
     }
     
-    // Update local high score
     if (score > highScore) {
-      console.log('New local high score:', score);
       setHighScore(score);
       sessionStorage.setItem("flappy_highscore", score.toString());
     }
