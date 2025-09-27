@@ -6,7 +6,6 @@ type GameState = 'Start' | 'Ready' | 'Play' | 'End';
 export const useFlappyGame = () => {
   const [gameState, setGameState] = useState<GameState>('Start');
   const [score, setScore] = useState(0);
-  const [birdTop, setBirdTop] = useState(40); // Track bird position in state
   const [highScore, setHighScore] = useState(0);
   
   const birdRef = useRef<HTMLImageElement>(null);
@@ -81,12 +80,12 @@ export const useFlappyGame = () => {
     if (birdRef.current) {
       birdRef.current.style.display = 'block';
       birdRef.current.style.top = '40vh';
+      birdRef.current.style.position = 'absolute'; // Ensure proper positioning
     }
     
     // Reset all game state
     birdDy.current = 0;
     setScore(0);
-    setBirdTop(40);
     frameCount.current = 0;
     setGameState('Ready');
   }, []);
@@ -116,12 +115,8 @@ export const useFlappyGame = () => {
         return;
       }
       
-      // Update DOM element (fixed positioning)
+      // Update DOM element ONLY - no React state updates during gameplay
       bird.style.top = newTopPixels + 'px';
-      
-      // Update React state for rendering
-      const newTopVh = (newTopPixels / window.innerHeight) * 100;
-      setBirdTop(newTopVh);
       
       const birdProps = bird.getBoundingClientRect();
 
@@ -193,7 +188,7 @@ export const useFlappyGame = () => {
     };
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [endGame]); // Remove gameState from dependency to avoid stale closure
+  }, [endGame]);
 
   // Controls matching your original
   useEffect(() => {
@@ -244,8 +239,6 @@ export const useFlappyGame = () => {
     gameState,
     score,
     highScore,
-    birdTop, // Now properly tracked in state
-    pipes: [], // Empty array since we use DOM manipulation
     birdRef,
     startGame: resetGame,
     beginGameplay: startGameLoop,
