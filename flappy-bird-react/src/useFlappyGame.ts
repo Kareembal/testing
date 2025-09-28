@@ -70,10 +70,13 @@ export const useFlappyGame = () => {
     document.querySelectorAll('.pipe_sprite').forEach(e => e.remove());
     pipes.current = [];
     
-    // Reset bird position
+    // Reset bird position - set initial position in pixels
     if (birdRef.current) {
       birdRef.current.style.display = 'block';
       birdRef.current.style.position = 'absolute';
+      // Set initial position in pixels to match what game loop expects
+      const initialTop = window.innerHeight * 0.4; // 40vh in pixels
+      birdRef.current.style.top = initialTop + 'px';
     }
     
     // Reset all game state
@@ -102,8 +105,9 @@ export const useFlappyGame = () => {
       birdDy.current += gravity;
       const newTopPixels = bird.offsetTop + birdDy.current;
       
-      // Boundary check
-      if (newTopPixels <= 0 || newTopPixels + bird.clientHeight >= backgroundRect.current.height) {
+      // Boundary check - use proper height comparison
+      const gameHeight = backgroundRect.current ? backgroundRect.current.height : window.innerHeight;
+      if (newTopPixels <= 0 || newTopPixels + bird.clientHeight >= gameHeight) {
         endGame();
         return;
       }
