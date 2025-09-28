@@ -35,11 +35,12 @@ export const useFlappyGame = () => {
     }
   }, []);
 
+  // Simplified jump function - mainly for click handler
   const jump = useCallback(() => {
     if (gameState === 'Play') {
       birdDy.current = jumpForce;
     }
-  }, [gameState]);
+  }, [gameState, jumpForce]);
 
   const endGame = useCallback(() => {
     if (gameLoopRef.current) {
@@ -191,38 +192,49 @@ export const useFlappyGame = () => {
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && gameState !== 'Play') {
-        resetGame();
-      }
-      if ((e.key === 'ArrowUp' || e.key === ' ')) {
-        if (gameState === 'Ready') {
-          startGameLoop();
+      e.preventDefault(); // Prevent default browser behavior
+      
+      if (e.key === 'Enter') {
+        // Use a ref to get current game state
+        const currentState = gameState;
+        if (currentState !== 'Play') {
+          resetGame();
         }
-        if (gameState === 'Play') {
-          jump();
+      }
+      if (e.key === 'ArrowUp' || e.key === ' ') {
+        const currentState = gameState;
+        if (currentState === 'Ready') {
+          startGameLoop();
+        } else if (currentState === 'Play') {
+          // Directly set jump force instead of relying on callback
+          birdDy.current = jumpForce;
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, jump, resetGame, startGameLoop]);
+  }, [gameState, resetGame, startGameLoop, jumpForce]); // Add jumpForce to dependencies
 
   // Touch controls
   useEffect(() => {
-    const handleTouch = () => {
-      if (gameState === 'Start') {
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault(); // Prevent default touch behavior
+      
+      const currentState = gameState;
+      if (currentState === 'Start') {
         resetGame();
-      } else if (gameState === 'Ready') {
+      } else if (currentState === 'Ready') {
         startGameLoop();
-      } else if (gameState === 'Play') {
-        jump();
+      } else if (currentState === 'Play') {
+        // Directly set jump force
+        birdDy.current = jumpForce;
       }
     };
 
-    document.addEventListener('touchstart', handleTouch);
+    document.addEventListener('touchstart', handleTouch, { passive: false });
     return () => document.removeEventListener('touchstart', handleTouch);
-  }, [gameState, jump, resetGame, startGameLoop]);
+  }, [gameState, resetGame, startGameLoop, jumpForce]);
 
   // Cleanup
   useEffect(() => {
