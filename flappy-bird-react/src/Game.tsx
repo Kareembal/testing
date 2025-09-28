@@ -1,5 +1,4 @@
 import { useFlappyGame } from './useFlappyGame';
-import Leaderboard from './Leaderboard';
 import './Game.css';
 
 export default function Game() {
@@ -22,12 +21,12 @@ export default function Game() {
       
       {/* Bird */}
       <img 
-        ref={birdRef}  // CRITICAL: Added the missing ref
+        ref={birdRef}
         src="/images/Bird-2.svg" 
         alt="bird-img" 
         className="bird" 
         style={{
-          position: 'absolute',  // Added for proper positioning
+          position: 'absolute',
           top: `${birdTop}vh`,
           display: gameState === 'End' ? 'none' : 'block'
         }}
@@ -35,7 +34,7 @@ export default function Game() {
         height="100"
       />
 
-      {/* Game Message */}
+      {/* Game Messages */}
       {gameState === 'Start' && (
         <div className="message messageStyle">
           Press Enter To Start Game
@@ -51,6 +50,10 @@ export default function Game() {
         <div className="message messageStyle">
           <span style={{ color: 'red' }}>Game Over</span>
           <br />
+          Your Score: {score}
+          <br />
+          High Score: {highScore}
+          <br />
           Press Enter To Restart
         </div>
       )}
@@ -60,9 +63,6 @@ export default function Game() {
         <span className="score_title">SCORE</span>
         <span className="score_val">{score}</span>
       </div>
-      
-      {/* Leaderboard */}
-      <Leaderboard currentScore={score} />
     </div>
   );
 }
