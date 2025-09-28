@@ -50,10 +50,6 @@ export default function Game() {
         <div className="message messageStyle">
           <span style={{ color: 'red' }}>Game Over</span>
           <br />
-          Your Score: {score}
-          <br />
-          High Score: {highScore}
-          <br />
           Press Enter To Restart
         </div>
       )}
